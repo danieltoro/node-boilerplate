@@ -23,7 +23,9 @@ const app = express();
 middlewaresConfig(app);
 
 
-
+app.get('/', (req, res) => {
+    res.send('Holiiii');
+});
 
 
 module.exports = app;

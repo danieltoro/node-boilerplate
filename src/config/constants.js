@@ -6,8 +6,8 @@ const devConfig = {
 };
 
 const testConfig = {
-    MONGO_URL: 'mongodb://localhost/nodejs-api-boilerplate-test',
-    JWT_SECRET: 'ewtijwebgiuweg9w98u9283982t!!u1h28h1t1h89u9h@$$',
+    MONGO_URL: process.env.MONGO_URL_TEST,
+    JWT_SECRET: process.env.JWT_SECRET_TEST,
 };
 
 const prodConfig = {
@@ -17,6 +17,22 @@ const prodConfig = {
 
 const defaultConfig = {
     PORT: process.env.PORT || 3000,
+    oauth: {
+        google: {
+            clientID: process.env.GOOGLE_CLIENTID,
+            clientSecret: process.env.GOOGLE_CLIENTSECRET,
+        },
+        facebook: {
+            clientID: process.env.FACEBOOK_CLIENTID,
+            clientSecret: process.env.FACEBOOK_CLIENTSECRET,
+        },
+    },
+    ContactForm: {
+        USER: process.env.USERNAME,
+        PASS: process.env.PASSWORD,
+        SERVER: process.env.SMPT_SERVER,
+        PORT: process.env.SMPT_PORT,
+    },
 };
 
 function envConfig(env) {
