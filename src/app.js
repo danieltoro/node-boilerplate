@@ -3,7 +3,12 @@
 *
 * */
 const express = require('express');
-const morgan = require('morgan');
+
+/*
+* Import Middlewares config
+*
+* */
+const middlewaresConfig = require('./config/middlewares');
 
 /*
 * Express instance
@@ -12,12 +17,10 @@ const morgan = require('morgan');
 const app = express();
 
 /*
-* Middlewares
+* Wrap all the middlewares with the server
 *
 * */
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+middlewaresConfig(app);
 
 
 
