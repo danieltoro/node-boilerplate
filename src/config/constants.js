@@ -1,20 +1,40 @@
+/*
+* Import dotenv config
+*
+* */
 require('dotenv').config();
 
+/*
+* Development config
+*
+* */
 const devConfig = {
     MONGO_URL: process.env.MONGO_URL_DEV,
     JWT_SECRET: process.env.JWT_SECRET_DEV,
 };
 
+/*
+* Testing config
+*
+* */
 const testConfig = {
     MONGO_URL: process.env.MONGO_URL_TEST,
     JWT_SECRET: process.env.JWT_SECRET_TEST,
 };
 
+/*
+* Production config
+*
+* */
 const prodConfig = {
     MONGO_URL: process.env.MONGO_URL_PROD,
     JWT_SECRET: process.env.JWT_SECRET_PROD,
 };
 
+/*
+* Default config
+*
+* */
 const defaultConfig = {
     PORT: process.env.PORT || 3000,
     oauth: {
@@ -35,6 +55,10 @@ const defaultConfig = {
     },
 };
 
+/*
+* Enviroment configuration
+*
+* */
 function envConfig(env) {
     switch (env) {
         case 'development':
@@ -46,6 +70,10 @@ function envConfig(env) {
     }
 }
 
+/*
+* Export default config + enviroment config
+*
+* */
 module.exports = {
     ...defaultConfig,
     ...envConfig(process.env.NODE_ENV),

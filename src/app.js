@@ -11,6 +11,12 @@ const express = require('express');
 const middlewaresConfig = require('./config/middlewares');
 
 /*
+* Import Middlewares config
+*
+* */
+const apiRoutes = require('./modules');
+
+/*
 * Express instance
 *
 * */
@@ -21,6 +27,12 @@ const app = express();
 *
 * */
 middlewaresConfig(app);
+
+/*
+* Wrap all the API routes
+*
+* */
+apiRoutes(app);
 
 
 app.get('/', (req, res) => {
