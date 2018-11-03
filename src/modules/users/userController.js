@@ -55,12 +55,12 @@ module.exports = {
 
         // Respond with token
         return res.status(200).json({token: 'Bearer ' + token});
-
-
     },
 
     logIn: async (req, res) => {
-        console.log('User Controller logIn() called!')
+        // Generate token
+        const token = signToken(req.user);
+        res.status(200).json({token});
     },
 
     googleOAuth: async (req, res) => {

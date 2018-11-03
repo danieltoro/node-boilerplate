@@ -2,10 +2,16 @@
 * NPM Depedencies
 *
 * */
-const passport = require('passport');
+const auth = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const {ExtractJwt} = require('passport-jwt');
 const LocalStrategy = require('passport-local').Strategy;
+
+/*
+* Import User Model
+*
+* */
+const User = require('../modules/users/User');
 
 /*
 * Import JWT_SECRET
@@ -23,7 +29,7 @@ const jwtOps = {
     secretOrKey: JWT_SECRET,
 };
 // JWT Strategy
-passport.use(new JwtStrategy(jwtOps, async (payload, done) => {
+auth.use(new JwtStrategy(jwtOps, async (payload, done) => {
     try {
         // Find the user specified in token
         const user = await User.findById(payload.sub);
@@ -47,7 +53,7 @@ passport.use(new JwtStrategy(jwtOps, async (payload, done) => {
 // Local Options
 
 // Local Strategy
-passport.use(new LocalStrategy({
+auth.use(new LocalStrategy({
     usernameField: 'email'
 }, async (email, password, done) => {
     try {
