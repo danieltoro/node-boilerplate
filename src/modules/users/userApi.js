@@ -1,6 +1,11 @@
 const express = require('express');
+const passport = require('passport');
+
+const passportConf = require('../../services/passport');
 
 const userController = require('./userController');
+
+const {validateBody, schemas} = require('./userValidations');
 
 const routes = express.Router();
 
@@ -10,7 +15,7 @@ const routes = express.Router();
 * @description  Register users route
 * @access       Public
 * */
-routes.post('/signup', userController.signUp);
+routes.post('/signup', validateBody(schemas.authSchema), userController.signUp);
 
 /*
 * @route        POST api/user/login
@@ -39,5 +44,16 @@ routes.post('/facebook', userController.facebookOAuth);
 * @access       Private
 * */
 routes.get('/current', userController.current);
+
+/*
+* @route        GET api/user/current
+* @description  Register users route
+* @access       Private
+* */
+routes.get(
+    '/secret',
+    passport.authenticate('jwt', {session: false}),
+    userController.secret
+);
 
 module.exports = routes;

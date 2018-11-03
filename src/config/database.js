@@ -10,7 +10,7 @@ const chalk = require('chalk');
 * Import Keys
 *
 * */
-const db = require('./constants');
+const {MONGO_URL} = require('./constants');
 
 /*
 *  Remove the warning with promise
@@ -23,9 +23,9 @@ mongoose.Promise = global.Promise;
 *
 * */
 try {
-    mongoose.connect(db.MONGO_URL, {useNewUrlParser: true});
+    mongoose.connect(MONGO_URL, {useCreateIndex: true, useNewUrlParser: true});
 } catch (err) {
-    mongoose.createConnection(db.MONGO_URL);
+    mongoose.createConnection(MONGO_URL);
 }
 
 /*

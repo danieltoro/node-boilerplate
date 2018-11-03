@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+/*
+* Create a schema
+*
+* */
 const UserSchema = new Schema(
     {
         firstname: {
@@ -23,6 +27,7 @@ const UserSchema = new Schema(
             email: {
                 type: String,
                 lowercase: true,
+                unique: true
             },
             password: {
                 type: String,
@@ -50,4 +55,8 @@ const UserSchema = new Schema(
     {timestamps: true},
 );
 
+/*
+* Create and export a model
+*
+* */
 module.exports = User = mongoose.model('User', UserSchema);
