@@ -2,10 +2,12 @@
 * NPM Depedencies
 *
 * */
-const auth = require('passport');
+const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const {ExtractJwt} = require('passport-jwt');
 const LocalStrategy = require('passport-local').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 /*
 * Import User Model
@@ -14,22 +16,22 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../modules/users/User');
 
 /*
-* Import JWT_SECRET
+* Import config
 *
 * */
-const {JWT_SECRET} = require('../config/constants');
+const config = require('../config/constants');
 
 /*
 * Json Web Token Strategy
 *
 * */
 // JWT Options
-const jwtOps = {
+const jwtOpts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('authorization'),
-    secretOrKey: JWT_SECRET,
+    secretOrKey: config.JWT_SECRET,
 };
 // JWT Strategy
-auth.use(new JwtStrategy(jwtOps, async (payload, done) => {
+const jwtStrategy = new JwtStrategy(jwtOpts, async (payload, done) => {
     try {
         // Find the user specified in token
         const user = await User.findById(payload.sub);
@@ -44,18 +46,18 @@ auth.use(new JwtStrategy(jwtOps, async (payload, done) => {
     } catch (error) {
         done(error, false);
     }
-}));
+});
 
 /*
 * Local Strategy
 *
 * */
 // Local Options
-
-// Local Strategy
-auth.use(new LocalStrategy({
+const localOpts = {
     usernameField: 'email'
-}, async (email, password, done) => {
+};
+// Local Strategy
+const localStrategy = new LocalStrategy(localOpts, async (email, password, done) => {
     try {
         // Find the user given the email
         const user = await User.findOne({'local.email': email});
@@ -78,4 +80,90 @@ auth.use(new LocalStrategy({
     } catch (error) {
         done(error, false);
     }
-}));
+});
+
+/*
+* Google Strategy
+*
+* */
+// Google Options
+const googleOpts = {
+    clientID: config.oauth.google.clientID,
+    clientSecret: config.oauth.google.clientSecret,
+};
+// Google Strategy
+const googleStrategy = new GoogleStrategy(googleOpts, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Should have full user profile over here
+        console.log('profile: ', profile);
+        console.log('accessToken: ', accessToken);
+        console.log('refreshToken: ', refreshToken);
+        // Check whether this current user exist in our DB
+        const existingUser = await User.findOne({'google.id': profile.id});
+        if (existingUser) {
+            return done(null, existingUser);
+        }
+        // If new account
+        const newUser = new User({
+            method: 'google',
+            google: {
+                id: profile.id,
+                email: profile.emails[0].value,
+            },
+        });
+
+        await newUser.save();
+        done(null, newUser);
+    } catch (error) {
+        done(error, false, error.message);
+    }
+});
+
+/*
+* Google Strategy
+*
+* */
+// Google Options
+const facebookOpts = {
+    clientID: config.oauth.facebook.clientID,
+    clientSecret: config.oauth.facebook.clientSecret,
+};
+// Google Strategy
+const facebookStrategy = new FacebookStrategy(facebookOpts, async (accessToken, refreshToken, profile, done) => {
+    try {
+        console.log('profile', profile);
+        console.log('accessToken', accessToken);
+        console.log('refreshToken', refreshToken);
+
+        const existingUser = await User.findOne({'facebook.id': profile.id});
+        if (existingUser) {
+            return done(null, existingUser);
+        }
+
+        const newUser = new User({
+            method: 'facebook',
+            facebook: {
+                id: profile.id,
+                email: profile.emails[0].value,
+            },
+        });
+
+        await newUser.save();
+        done(null, newUser);
+    } catch (error) {
+        done(error, false, error.message);
+    }
+});
+
+passport.use(jwtStrategy);
+passport.use(localStrategy);
+passport.use(googleStrategy);
+passport.use(facebookStrategy);
+
+
+module.exports = {
+    authJwt: passport.authenticate('jwt', {session: false}),
+    authLocal: passport.authenticate('local', {session: false}),
+    authGoogle: passport.authenticate('google', {session: false}),
+    authFacebook: passport.authenticate('facebook', {session: false})
+};

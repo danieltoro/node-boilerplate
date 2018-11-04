@@ -60,23 +60,37 @@ module.exports = {
     logIn: async (req, res) => {
         // Generate token
         const token = signToken(req.user);
-        res.status(200).json({token});
+
+        // Respond with token
+        res.status(200).json({token: 'Bearer ' + token});
     },
 
     googleOAuth: async (req, res) => {
-        console.log('User Controller googleOAuth() called!')
+        // Generate Token
+        const token = signToken(req.user);
+        // Respond with token
+        res.status(200).json({token});
     },
 
     facebookOAuth: async (req, res) => {
-        console.log('User Controller facebookOAuth() called!')
+        // Generate Token
+        const token = signToken(req.user);
+        // Respond with token
+        res.status(200).json({token});
     },
 
     current: async (req, res) => {
-        console.log('User Controller current() called!')
+        res.json({
+            id: req.user.id,
+            method: req.user.method,
+            name: req.user.name,
+            email: req.user.email
+        });
     },
 
     secret: async (req, res) => {
-        console.log('User Controller secret() called!');
+        console.log('I managed to get here!');
+        res.json({secret: "resource"});
     },
 };
 

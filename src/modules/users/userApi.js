@@ -1,11 +1,14 @@
 const express = require('express');
-const passport = require('passport');
-
-const passportConf = require('../../services/auth');
 
 const userController = require('./userController');
 
 const {validateBody, schemas} = require('./userValidations');
+
+/*
+* Auth
+*
+* */
+const {authJwt, authLocal} = require('../../services/auth');
 
 const routes = express.Router();
 
@@ -28,7 +31,7 @@ routes.post(
 * */
 routes.post(
     '/login',
-    passport.authenticate('local', {session: false}),
+    authLocal,
     userController.logIn
 );
 
@@ -59,6 +62,7 @@ routes.post(
 * */
 routes.get(
     '/current',
+    authJwt,
     userController.current
 );
 
@@ -69,7 +73,7 @@ routes.get(
 * */
 routes.get(
     '/secret',
-    passport.authenticate('jwt', {session: false}),
+    authJwt,
     userController.secret
 );
 
